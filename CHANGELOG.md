@@ -4,36 +4,36 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Development
 -  nothing yet
 
-## [v5.0.0](https://github.com/regevbr/busywait.js/compare/v3.1.3...v4.0.0)
+## [v5.0.0](https://github.com/PruvoNet/busywait.js/compare/v3.1.3...v4.0.0)
 ### BREAKING CHANGES
 - Dropped support for node versions below 18
 
-## [v4.0.0](https://github.com/regevbr/busywait.js/compare/v3.1.3...v4.0.0)
+## [v4.0.0](https://github.com/PruvoNet/busywait.js/compare/v3.1.3...v4.0.0)
 ### BREAKING CHANGES
 - Dropped support for node versions below 14
 ### Fixed
 -  functions with `async` modifier were not recognized as functions
 
-## [v3.1.3](https://github.com/regevbr/busywait.js/compare/v3.1.2...v3.1.3)
+## [v3.1.3](https://github.com/PruvoNet/busywait.js/compare/v3.1.2...v3.1.3)
 ### Fixed
 -  Support for node 18
 
-## [v3.1.2](https://github.com/regevbr/busywait.js/compare/v3.1.1...v3.1.2)
+## [v3.1.2](https://github.com/PruvoNet/busywait.js/compare/v3.1.1...v3.1.2)
 ### Fixed
 -  Support for node 17
 
-## [v3.1.1](https://github.com/regevbr/busywait.js/compare/v3.1.0...v3.1.1)
+## [v3.1.1](https://github.com/PruvoNet/busywait.js/compare/v3.1.0...v3.1.1)
 ### Fixed
 -  Support for node 16
 
-## [v3.1.0](https://github.com/regevbr/busywait.js/compare/v3.0.0...v3.1.0)
+## [v3.1.0](https://github.com/PruvoNet/busywait.js/compare/v3.0.0...v3.1.0)
 ### Added
 -  Added total delay information to the checked function call
 ### Fixed
 -  Stopped messing the global stop with the `__awaiter` helper function
 -  Fixed checkFn doc in readme
 
-## [v3.0.0](https://github.com/regevbr/busywait.js/compare/v2.0.0...v3.0.0)
+## [v3.0.0](https://github.com/PruvoNet/busywait.js/compare/v2.0.0...v3.0.0)
 ### Breaking changes
 -  Errors are now an instance of `Error` and not plain strings
 -  Options type was modified
@@ -47,12 +47,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 -  Updated readme
 -  Updated all dependencies to the latest versions
 
-## [v2.0.0](https://github.com/regevbr/busywait.js/compare/v1.1.0...v2.0.0)
+## [v2.0.0](https://github.com/PruvoNet/busywait.js/compare/v1.1.0...v2.0.0)
 ### Breaking changes
 -  Removed redundant export methods
 -  Sync check functions will be considered as failed only if they throw error
 ### Added
--  Full typescript support [#9](https://github.com/regevbr/busywait.js/issues/9)
+-  Full typescript support [#9](https://github.com/PruvoNet/busywait.js/issues/9)
 -  Added test coverage
 ### Fixed
 -  Updated readme
