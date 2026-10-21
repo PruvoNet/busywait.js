@@ -1,61 +1,28 @@
 name: Publish
 
+# The npm trusted publisher names this file (publish.yml), so keep its name.
 on:
   release:
     types: [ published ]
+  workflow_dispatch:
 
-permissions:
-  id-token: write # Required for OIDC authentication
-  contents: read # Allows checking out the repository contents
-
-env:
-  NODE_VERSION: 24.x
-  REGISTRY: https://registry.npmjs.org/
+permissions: {}
 
 jobs:
   test:
     name: Run tests before publish
     uses: ./.github/workflows/ci.yml
-    secrets: inherit
+    permissions:
+      contents: read
+    secrets:
+      QLTY_COVERAGE_TOKEN: ${{ secrets.QLTY_COVERAGE_TOKEN }}
 
-  publish_version:
-    name: Publish
-    runs-on: ubuntu-latest
+  publish:
     needs: [ test ]
-    steps:
-
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: fetch
-        run: |
-          git fetch --prune --unshallow
-
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          registry-url: ${{ env.REGISTRY }}
-
-      - name: Get yarn cache directory
-        id: yarn-cache-dir
-        shell: bash
-        run: |
-          echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v4
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir.outputs.dir }}
-          key: ubuntu-latest-${{ env.NODE_VERSION }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ubuntu-latest-${{ env.NODE_VERSION }}-yarn-
-
-      - name: Install dependencies and build
-        run: |
-          yarn install --frozen-lockfile
-          yarn build
-
-      - name: Publish
-        run: |
-          npm publish
+    uses: PruvoNet/oss-workflows/.github/workflows/publish-npm.yml@638c70a621e280086c02bc7dcf4ccca4580d9041 # v1
+    permissions:
+      id-token: write # OIDC token for npm trusted publishing
+      contents: read
+    with:
+      package-manager: yarn
+      build-command: yarn build

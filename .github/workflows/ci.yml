@@ -3,81 +3,33 @@ name: CI
 on:
   push:
     branches:
-      - 'master'
+      - master
   pull_request:
     branches:
       - '**'
   workflow_call:
+    secrets:
+      QLTY_COVERAGE_TOKEN:
+        required: false
 
-env:
-  PRIMARY_NODE_VERSION: 24.x
-  PRIMARY_OS: ubuntu-latest
+permissions: {}
 
 jobs:
-  test:
-    name: CI
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        node-version: [ 18.x, 20.x, 22.x, 24.x ]
+  ci:
+    uses: PruvoNet/oss-workflows/.github/workflows/ci-node.yml@638c70a621e280086c02bc7dcf4ccca4580d9041 # v1
+    permissions:
+      contents: read
+    with:
+      package-manager: yarn
+      node-versions: '["18.x", "20.x", "22.x", "24.x"]'
+      build-command: yarn build
+      test-command: yarn test
+      coverage-command: yarn cover
+      qlty: true
+    secrets:
+      QLTY_COVERAGE_TOKEN: ${{ secrets.QLTY_COVERAGE_TOKEN }}
 
-    steps:
-
-      - name: Echo env variables
-        run: |
-          echo ref: ${{ github.event.client_payload.ref || github.ref }}
-          echo sha: ${{ github.event.client_payload.sha || github.sha }}
-          echo head ref: ${{ github.event.client_payload.head_ref || github.head_ref }}
-          echo base ref: ${{ github.event.client_payload.base_ref || github.base_ref }}
-          echo action: ${{ github.action }}
-          echo event: ${{ github.event_name }}
-
-      - uses: actions/checkout@v5
-        name: Checkout
-        with:
-          ref: ${{ github.event.client_payload.ref || github.ref }}
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Get yarn cache directory
-        id: yarn-cache-dir
-        run: |
-          echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v4
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir.outputs.dir }}
-          key: ${{ matrix.os }}-${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ matrix.os }}-${{ matrix.node-version }}-yarn-
-
-      - name: Install dependencies and build
-        run: |
-          yarn install --frozen-lockfile
-          yarn build
-
-      - name: Snyk security check
-        if: matrix.node-version == env.PRIMARY_NODE_VERSION && matrix.os == env.PRIMARY_OS && !github.event.pull_request.head.repo.fork
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
-      - name: Run unit tests with coverage
-        if: matrix.node-version == env.PRIMARY_NODE_VERSION && matrix.os == env.PRIMARY_OS && !github.event.pull_request.head.repo.fork
-        run: yarn cover
-
-      - name: Upload coverage
-        if: matrix.node-version == env.PRIMARY_NODE_VERSION && matrix.os == env.PRIMARY_OS
-        uses: qltysh/qlty-action/coverage@v2
-        with:
-          token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
-          files: coverage/lcov.info
-
-      - name: Run unit tests
-        if: "!(matrix.node-version == env.PRIMARY_NODE_VERSION && matrix.os == env.PRIMARY_OS)"
-        run: yarn test
+  zizmor:
+    uses: PruvoNet/oss-workflows/.github/workflows/zizmor.yml@638c70a621e280086c02bc7dcf4ccca4580d9041 # v1
+    permissions:
+      contents: read
