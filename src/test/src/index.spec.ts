@@ -15,7 +15,6 @@ describe('busywait.js', function() {
   this.timeout(10000)
 
   const waitTime = 2500
-  let waitUntil: number
   let iterationsArray: number[]
   let delaysArray: number[]
   let totalDelaysArray: number[]
@@ -24,8 +23,11 @@ describe('busywait.js', function() {
     iterationsArray = []
     delaysArray = []
     totalDelaysArray = []
-    waitUntil = Date.now() + waitTime
   })
+
+  // Succeed once the planned delays reach waitTime. The wall clock races the timers at the boundary
+  // (one iteration more or less on a slow runner); the planned schedule is exact.
+  const waitIsOver = (): boolean => delaysArray.reduce((sum, delay) => sum + delay, 0) >= waitTime
 
   const checkIterationsArray = (iterations: number, delay: number, startDelay: boolean) => {
     expect(iterationsArray.length).to.equal(iterations)
@@ -66,7 +68,7 @@ describe('busywait.js', function() {
     iterationsArray.push(iteration)
     delaysArray.push(delay)
     totalDelaysArray.push(totalDelay)
-    if (Date.now() > waitUntil) {
+    if (waitIsOver()) {
       return successMessage
     }
     throw new Error('not the time yet')
@@ -77,7 +79,7 @@ describe('busywait.js', function() {
     delaysArray.push(delay)
     totalDelaysArray.push(totalDelay)
     return new Promise((resolve, reject) => {
-      if (Date.now() > waitUntil) {
+      if (waitIsOver()) {
         return resolve(successMessage)
       }
       return reject()
@@ -88,7 +90,7 @@ describe('busywait.js', function() {
     iterationsArray.push(iteration)
     delaysArray.push(delay)
     totalDelaysArray.push(totalDelay)
-    if (Date.now() > waitUntil) {
+    if (waitIsOver()) {
       return successMessage
     }
     throw new Error()
