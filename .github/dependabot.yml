@@ -39,3 +39,8 @@ updates:
           - major
         patterns:
           - '*'
+    # Newer ESLint tooling needs Node 20; busywait still supports and tests Node 18.
+    ignore:
+      - dependency-name: eslint
+      - dependency-name: '@typescript-eslint/*'
+      - dependency-name: '@stylistic/*'
